@@ -144,6 +144,7 @@ body {
   position: relative;
   max-height: 300px;
   overflow-y: auto;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .main-content__container::-webkit-scrollbar {
