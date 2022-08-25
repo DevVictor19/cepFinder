@@ -86,7 +86,7 @@ body {
   align-items: center;
 }
 
-.main-header__search-ico {
+.main-header__search-svg {
   height: 30px;
 }
 
@@ -110,6 +110,10 @@ body {
 .main-content__actions-form {
   display: flex;
   align-items: center;
+}
+
+.main-content__search-svg {
+  height: 30px;
 }
 
 .main-content__delete-btn {
