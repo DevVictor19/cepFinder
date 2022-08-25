@@ -1,3 +1,5 @@
+/* Reset + variables */
+
 :root {
   --black: #100f0f;
   --gray: #f1f1f1;
@@ -18,6 +20,8 @@ body {
   margin: auto;
   background-color: var(--gray);
 }
+
+/* global classes */
 
 .input-text {
   height: 40px;
@@ -56,6 +60,11 @@ body {
   background-color: var(--pink);
 }
 
+.disable {
+  display: none !important;
+}
+
+/* styles */
 .main-header {
   position: fixed;
   top: 0;
@@ -173,10 +182,6 @@ body {
   text-align: left;
 }
 
-.main-content__table--disable {
-  display: none;
-}
-
 .main-content-thead-tr {
   background-color: var(--black);
   height: 40px;
@@ -218,8 +223,4 @@ body {
   font-size: 1rem;
   text-align: center;
   color: #8a7d7d;
-}
-
-.main-content__text--disable {
-  display: none;
 }
