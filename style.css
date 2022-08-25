@@ -110,6 +110,10 @@ body {
   margin-bottom: 16px;
 }
 
+.main-content__actions--disable {
+  display: none;
+}
+
 .main-content__actions-form {
   display: flex;
   align-items: center;
@@ -169,6 +173,10 @@ body {
   text-align: left;
 }
 
+.main-content__table--disable {
+  display: none;
+}
+
 .main-content-thead-tr {
   background-color: var(--black);
   height: 40px;
@@ -204,4 +212,14 @@ body {
   text-align: center;
   font-weight: bold;
   cursor: pointer;
+}
+
+.main-content__text {
+  font-size: 1rem;
+  text-align: center;
+  color: #8a7d7d;
+}
+
+.main-content__text--disable {
+  display: none;
 }
