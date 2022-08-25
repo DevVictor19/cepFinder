@@ -16,16 +16,24 @@
       CepFinder
     </h1>
     <form class="main-header__form">
-      <input class="main-header__input-cep" type="text" name="cep" placeholder="Digite o CEP">
-      <button class="main-header__submit-btn" type="button">
+      <input id="main-header__input-cep" class="input-text" type="text" name="cep" placeholder="Digite o CEP">
+      <button id="main-header__submit-btn" class="input-btn" type="button">
         <svg class="main-header__search-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-width="5" stroke="currentColor" fill="none"><circle cx="27.31" cy="25.74" r="18.1"/><line x1="39.58" y1="39.04" x2="56.14" y2="57"/></svg>
       </button>
     </form>
   </header>
   <main class="main-content">
-    <button title="Limpar tabela" class="main-content__delete-btn" type="button">
-      <svg class="main-content__delete-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-width="8" stroke="currentColor" fill="none"><line x1="8.06" y1="8.06" x2="55.41" y2="55.94"/><line x1="55.94" y1="8.06" x2="8.59" y2="55.94"/></svg>
-    </button>
+    <div class="main-content__actions">
+      <form class="main-content__actions-form">
+        <input  id="main-content__actions-input" class="input-text" name="localCep" placeholder="Verificar CEP na lista" type="text">
+        <button id="main-content__actions-btn" class="input-btn" type="button">
+          <svg class="main-header__search-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-width="5" stroke="currentColor" fill="none"><circle cx="27.31" cy="25.74" r="18.1"/><line x1="39.58" y1="39.04" x2="56.14" y2="57"/></svg>
+        </button>
+      </form>
+      <button title="Limpar tabela" class="main-content__delete-btn" type="button">
+        <svg class="main-content__delete-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-width="8" stroke="currentColor" fill="none"><line x1="8.06" y1="8.06" x2="55.41" y2="55.94"/><line x1="55.94" y1="8.06" x2="8.59" y2="55.94"/></svg>
+      </button>
+    </div>
     <div class="main-content__container">
       <table class="main-content__table">
         <thead>
