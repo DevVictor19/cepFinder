@@ -3,6 +3,11 @@ const header_btn_submit = document.querySelector("#main-header__submit-btn");
 
 const endpoint = "https://viacep.com.br/ws/enteredCep/json/"
 
+// reusable functions
+function normalizeString(str) {
+  return str.replace(/\D/g, '');
+}
+
 // cep data manipulation functions
 async function getCep(cep) {
   const response = await fetch(endpoint.replace("enteredCep", cep));
@@ -26,16 +31,13 @@ async function getCep(cep) {
     state: data.uf,
   };
   
+  console.log(newCep);
+
   return newCep;
 }
 
-// reusable functions
-function normalizeString(str) {
-  return str.replace(/\D/g, '');
-}
-
 // header input control
-header_cep_input.addEventListener("keyup", function(e) {
+function header_handleKeyPress(e) {
   let inputValue = normalizeString(e.target.value.trim());
 
   if (inputValue.length > 8) {
@@ -43,9 +45,9 @@ header_cep_input.addEventListener("keyup", function(e) {
   }
 
   header_cep_input.value = inputValue;
-});
+}
 
-header_btn_submit.addEventListener("click", function() {
+function header_handleSubmit() {
   const currentInputValue = header_cep_input.value;
 
   if (currentInputValue.length !== 8) {
@@ -54,5 +56,8 @@ header_btn_submit.addEventListener("click", function() {
   }
 
   getCep(currentInputValue);
-});
+}
 
+//event listeners
+header_cep_input.addEventListener("keyup", header_handleKeyPress);
+header_btn_submit.addEventListener("click", header_handleSubmit);
