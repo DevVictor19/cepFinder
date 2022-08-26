@@ -147,7 +147,7 @@ async function header_handleSubmit() {
   }
 
   if (cepExists(currentInputValue)) {
-    alert("CEP já pesquisado. Iremos te mostrar o cep destacado na lista.");
+    alert("CEP já pesquisado. Iremos te mostrar o cep destacando-o na lista.");
     goToCep(currentInputValue);
     return;
   }
