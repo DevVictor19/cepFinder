@@ -1,5 +1,7 @@
 const header_cep_input = document.querySelector("#main-header__input-cep");
 const header_btn_submit = document.querySelector("#main-header__submit-btn");
+const list_cep_input = document.querySelector("#main-content__actions-input");
+const list_btn_submit = document.querySelector("#main-content__actions-btn");
 
 const endpoint = "https://viacep.com.br/ws/enteredCep/json/"
 
@@ -13,6 +15,16 @@ function toggleMainContent() {
   document.querySelector(".main-content__table").classList.toggle("disable");
   document.querySelector(".main-content__actions").classList.toggle("disable");
 };
+
+function controlInput(e, targetInput) {
+  let inputValue = normalizeString(e.target.value.trim());
+
+  if (inputValue.length > 8) {
+    inputValue = inputValue.slice(0, -1);
+  }
+
+  targetInput.value = inputValue;
+}
 
 // cep data manipulation functions
 async function getCep(cep) {
@@ -115,16 +127,6 @@ window.onload = () => {
 };
 
 // header input control
-function header_handleKeyPress(e) {
-  let inputValue = normalizeString(e.target.value.trim());
-
-  if (inputValue.length > 8) {
-    inputValue = inputValue.slice(0, -1);
-  }
-
-  header_cep_input.value = inputValue;
-}
-
 async function header_handleSubmit() {
   const currentInputValue = header_cep_input.value;
 
@@ -154,9 +156,36 @@ async function header_handleSubmit() {
   }
 }
 
+// list input control 
+function list_handleSubmit() {
+  const currentInputValue = list_cep_input.value;
+
+  if (currentInputValue.length !== 8) {
+    alert("Por favor, insira um cep válido: 8 números e sem caracteres especiais.");
+    return;
+  }
+
+  if(!cepExists(currentInputValue)) {
+    alert("Cep não foi encontrado na lista. Tente buscar por esse CEP no canto superior direito.");
+    return;
+  }
+
+  const searchedCep =  document.getElementById(currentInputValue);
+
+ searchedCep.scrollIntoView({behavior: 'smooth'});
+ searchedCep.classList.add('focus');
+
+ setTimeout(() => {
+  searchedCep.classList.remove('focus');
+ }, 3000);
+}
+
 //event listeners
-header_cep_input.addEventListener("keyup", header_handleKeyPress);
+header_cep_input.addEventListener("keyup", (e) => controlInput(e, header_cep_input));
 header_btn_submit.addEventListener("click", header_handleSubmit);
 
 document.querySelector("#main-content__deleteAll-btn")
   .addEventListener("click", deleteAllCeps);
+
+list_cep_input.addEventListener("keyup", (e) => controlInput(e, list_cep_input));
+list_btn_submit.addEventListener("click", list_handleSubmit);

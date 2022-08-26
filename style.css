@@ -64,6 +64,11 @@ body {
   display: none !important;
 }
 
+.focus {
+  background-color: var(--primary);
+  color: var(--gray);
+}
+
 /* styles */
 .main-header {
   position: fixed;
