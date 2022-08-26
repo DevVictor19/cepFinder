@@ -74,6 +74,7 @@ function createCep(cep_data) {
   remove_td.innerText = "X";
   remove_td.addEventListener("click", (e) => {
     tbody.removeChild(e.target.parentElement);
+    deleteCep(cep);
   });
   tr.appendChild(remove_td);
 
@@ -83,12 +84,28 @@ function createCep(cep_data) {
 function cepExists(cep) {
   const localCeps = JSON.parse(localStorage.getItem("ceps"));
 
-  return !!localCeps.find(cepData => cepData.cep === cep);
+  return !!localCeps?.find(cepData => cepData.cep === cep);
+};
+
+function deleteCep(cep) {
+  const newLocalCeps = 
+    JSON.parse(localStorage.getItem("ceps"))
+    .filter(obj => obj.cep !== cep);
+
+  if(newLocalCeps.length === 0) toggleMainContent();
+
+  localStorage.setItem("ceps", JSON.stringify(newLocalCeps));
+};
+
+function deleteAllCeps() {
+  localStorage.setItem("ceps", JSON.stringify([]));
+  document.querySelector("#main-content__tbody").innerHTML = "";
+  toggleMainContent();
 };
 
 window.onload = () => {
-  const localCeps  = JSON.parse(localStorage.getItem("ceps"))
-  if(!localCeps) return;
+  const localCeps  = JSON.parse(localStorage.getItem("ceps"));
+  if(!localCeps || localCeps.length === 0) return;
 
   toggleMainContent();
 
@@ -117,7 +134,7 @@ async function header_handleSubmit() {
   }
 
   if (cepExists(currentInputValue)) {
-    alert("Esse cep já foi pesquisado, verifique na lista");
+    alert("Esse cep já foi pesquisado, verifique na lista.");
     return;
   }
 
@@ -128,15 +145,18 @@ async function header_handleSubmit() {
   
   const localCeps  = JSON.parse(localStorage.getItem("ceps"));
 
-  if(localCeps) {
-    const updatedLocalCeps = [...localCeps, newCep];
-    localStorage.setItem("ceps", JSON.stringify(updatedLocalCeps));
-  } else {
+  if(!localCeps || localCeps.length === 0) {
     toggleMainContent();
     localStorage.setItem("ceps", JSON.stringify([newCep]));
+  } else {
+    const updatedLocalCeps = [...localCeps, newCep];
+    localStorage.setItem("ceps", JSON.stringify(updatedLocalCeps));
   }
 }
 
 //event listeners
 header_cep_input.addEventListener("keyup", header_handleKeyPress);
 header_btn_submit.addEventListener("click", header_handleSubmit);
+
+document.querySelector("#main-content__deleteAll-btn")
+  .addEventListener("click", deleteAllCeps);
