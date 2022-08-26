@@ -213,7 +213,7 @@ body {
   padding: 0 8px;
 }
 
-#main-content__tbody-delete {
+.main-content__tbody-td--remove {
   text-align: center;
   font-weight: bold;
   cursor: pointer;
