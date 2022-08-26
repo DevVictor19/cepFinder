@@ -65,8 +65,8 @@ body {
 }
 
 .focus {
-  background-color: var(--primary);
-  color: var(--gray);
+  background-color: var(--primary) !important;
+  color: var(--gray) !important;
 }
 
 /* styles */

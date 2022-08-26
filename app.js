@@ -26,6 +26,17 @@ function controlInput(e, targetInput) {
   targetInput.value = inputValue;
 }
 
+function goToCep(cep) {
+  const currentCepItem = document.getElementById(cep);
+
+  currentCepItem.scrollIntoView({behavior: 'smooth'});
+  currentCepItem.classList.add('focus');
+
+ setTimeout(() => {
+  currentCepItem.classList.remove('focus');
+ }, 3000);
+}
+
 // cep data manipulation functions
 async function getCep(cep) {
   const response = await fetch(endpoint.replace("enteredCep", cep));
@@ -154,6 +165,8 @@ async function header_handleSubmit() {
     const updatedLocalCeps = [...localCeps, newCep];
     localStorage.setItem("ceps", JSON.stringify(updatedLocalCeps));
   }
+
+  goToCep(currentInputValue);
 }
 
 // list input control 
@@ -170,14 +183,7 @@ function list_handleSubmit() {
     return;
   }
 
-  const searchedCep =  document.getElementById(currentInputValue);
-
- searchedCep.scrollIntoView({behavior: 'smooth'});
- searchedCep.classList.add('focus');
-
- setTimeout(() => {
-  searchedCep.classList.remove('focus');
- }, 3000);
+  goToCep(currentInputValue);
 }
 
 //event listeners
