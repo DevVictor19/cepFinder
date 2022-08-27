@@ -19,13 +19,13 @@ window.onload = function() {
 // reusable functions
 function normalizeString(str) {
   return str.replace(/\D/g, '');
-};
+}
 
 function toggleMainContent() {
   document.querySelector(".main-content__text").classList.toggle("disable");
   document.querySelector(".main-content__table").classList.toggle("disable");
   document.querySelector(".main-content__actions").classList.toggle("disable");
-};
+}
 
 function controlInput(e, targetInput) {
   let inputValue = normalizeString(e.target.value.trim());
@@ -35,13 +35,13 @@ function controlInput(e, targetInput) {
   }
 
   targetInput.value = inputValue;
-};
+}
 
 function goToCep(cep) {
   const currentCepItem = document.getElementById(cep);
 
   currentCepItem.scrollIntoView({behavior: 'smooth'});
-};
+}
 
 function focusCep(cep) {
   const currentCepItem = document.getElementById(cep);
@@ -51,7 +51,7 @@ function focusCep(cep) {
   setTimeout(() => {
     currentCepItem.classList.remove('focus');
   }, 3000);
-};
+}
 
 // cep data manipulation functions
 async function getCep(cep) {
@@ -78,7 +78,7 @@ async function getCep(cep) {
   };
   
   return newCep;
-};
+}
 
 function createCepItem(cep_data) {
   const {cep, locality, district, stateTag, state} = cep_data;
@@ -121,13 +121,13 @@ function createCepItem(cep_data) {
   tr.appendChild(remove_td);
 
   tbody.appendChild(tr);
-};
+}
 
 function cepExists(cep) {
   const localCeps = JSON.parse(localStorage.getItem("ceps"));
 
   return !!localCeps?.find(cepData => cepData.cep === cep);
-};
+}
 
 function deleteCep(cep) {
   const newLocalCeps = 
@@ -135,11 +135,11 @@ function deleteCep(cep) {
     .filter(obj => obj.cep !== cep);
 
   localStorage.setItem("ceps", JSON.stringify(newLocalCeps));
-};
+}
 
 function deleteAllCeps() {
   localStorage.setItem("ceps", JSON.stringify([]));
-};
+}
 
 // header input control
 async function header_handleSubmit(e) {
