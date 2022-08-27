@@ -17,3 +17,4 @@ Feita no programa Dev For Tech 2 - Gama Academy
 ## Links importantes
 - liveapp: https://cepfinder.netlify.app/
 - linkedin: https://www.linkedin.com/in/antonio-victor-oliveira-borges-4a2852228
+- api: https://viacep.com.br/
