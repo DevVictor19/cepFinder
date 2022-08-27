@@ -5,10 +5,12 @@ const list_btn_submit = document.querySelector("#main-content__actions-btn");
 
 const endpoint = "https://viacep.com.br/ws/enteredCep/json/"
 
+window.onload = renderAllCeps;
+
 // reusable functions
 function normalizeString(str) {
   return str.replace(/\D/g, '');
-}
+};
 
 function toggleMainContent() {
   document.querySelector(".main-content__text").classList.toggle("disable");
@@ -24,18 +26,23 @@ function controlInput(e, targetInput) {
   }
 
   targetInput.value = inputValue;
-}
+};
 
 function goToCep(cep) {
   const currentCepItem = document.getElementById(cep);
 
   currentCepItem.scrollIntoView({behavior: 'smooth'});
+};
+
+function blurCep(cep) {
+  const currentCepItem = document.getElementById(cep);
+
   currentCepItem.classList.add('focus');
 
- setTimeout(() => {
-  currentCepItem.classList.remove('focus');
- }, 3000);
-}
+  setTimeout(() => {
+    currentCepItem.classList.remove('focus');
+  }, 3000);
+};
 
 // cep data manipulation functions
 async function getCep(cep) {
@@ -62,7 +69,7 @@ async function getCep(cep) {
   };
   
   return newCep;
-}
+};
 
 function createCep(cep_data) {
   const {cep, locality, district, stateTag, state} = cep_data;
@@ -97,7 +104,10 @@ function createCep(cep_data) {
   remove_td.innerText = "X";
   remove_td.addEventListener("click", (e) => {
     tbody.removeChild(e.target.parentElement);
+    
     deleteCep(cep);
+
+    if (JSON.parse(localStorage.getItem("ceps")).length === 0) toggleMainContent();
   });
   tr.appendChild(remove_td);
 
@@ -115,18 +125,14 @@ function deleteCep(cep) {
     JSON.parse(localStorage.getItem("ceps"))
     .filter(obj => obj.cep !== cep);
 
-  if(newLocalCeps.length === 0) toggleMainContent();
-
   localStorage.setItem("ceps", JSON.stringify(newLocalCeps));
 };
 
 function deleteAllCeps() {
   localStorage.setItem("ceps", JSON.stringify([]));
-  document.querySelector("#main-content__tbody").innerHTML = "";
-  toggleMainContent();
 };
 
-window.onload = () => {
+function renderAllCeps() {
   const localCeps  = JSON.parse(localStorage.getItem("ceps"));
   if(!localCeps || localCeps.length === 0) return;
 
@@ -149,6 +155,7 @@ async function header_handleSubmit() {
   if (cepExists(currentInputValue)) {
     alert("CEP já pesquisado. Iremos te mostrar o cep destacando-o na lista.");
     goToCep(currentInputValue);
+    blurCep(currentInputValue);
     return;
   }
 
@@ -168,6 +175,7 @@ async function header_handleSubmit() {
   }
 
   goToCep(currentInputValue);
+  blurCep(currentInputValue);
 }
 
 // list input control 
@@ -185,6 +193,7 @@ function list_handleSubmit() {
   }
 
   goToCep(currentInputValue);
+  blurCep(currentInputValue);
 }
 
 //event listeners
@@ -192,7 +201,11 @@ header_cep_input.addEventListener("input", (e) => controlInput(e, header_cep_inp
 header_btn_submit.addEventListener("click", header_handleSubmit);
 
 document.querySelector("#main-content__deleteAll-btn")
-  .addEventListener("click", deleteAllCeps);
+  .addEventListener("click", () => {
+    document.querySelector("#main-content__tbody").innerHTML = "";
+    deleteAllCeps();
+    toggleMainContent();
+  });
 
 list_cep_input.addEventListener("input", (e) => controlInput(e, list_cep_input));
 list_btn_submit.addEventListener("click", list_handleSubmit);
