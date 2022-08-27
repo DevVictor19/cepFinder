@@ -1,5 +1,6 @@
 # cepFinder
-Aplicação de buscar CEP feita em js, html e css 
+Aplicação de buscar CEP feita em js, html e css. 
+Feita no programa Dev For Tech 2 - Gama Academy
 
 ## Features 
 - Buscar CEP
