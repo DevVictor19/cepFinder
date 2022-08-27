@@ -12,7 +12,7 @@ window.onload = function() {
   toggleMainContent();
 
   localCeps.forEach(cepData => {
-    createCep(cepData);
+    createCepItem(cepData);
   });
 }
 
@@ -80,7 +80,7 @@ async function getCep(cep) {
   return newCep;
 };
 
-function createCep(cep_data) {
+function createCepItem(cep_data) {
   const {cep, locality, district, stateTag, state} = cep_data;
   const tbody = document.querySelector("#main-content__tbody");
 
@@ -162,7 +162,7 @@ async function header_handleSubmit(e) {
   const newCep = await getCep(currentInputValue);
   if(!newCep) return;
   
-  createCep(newCep);
+  createCepItem(newCep);
   
   const localCeps  = JSON.parse(localStorage.getItem("ceps"));
 
