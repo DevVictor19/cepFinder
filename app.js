@@ -3,29 +3,29 @@ const header_btn_submit = document.querySelector("#main-header__submit-btn");
 const list_cep_input = document.querySelector("#main-content__actions-input");
 const list_btn_submit = document.querySelector("#main-content__actions-btn");
 
-const endpoint = "https://viacep.com.br/ws/enteredCep/json/"
+const endpoint = "https://viacep.com.br/ws/enteredCep/json/";
 
-window.onload = function() {
-  const localCeps  = JSON.parse(localStorage.getItem("ceps"));
-  if(!localCeps || localCeps.length === 0) return;
+window.onload = function () {
+  const localCeps = JSON.parse(localStorage.getItem("ceps"));
+  if (!localCeps || localCeps.length === 0) return;
 
   toggleMainContent();
 
-  localCeps.forEach(cepData => {
+  localCeps.forEach((cepData) => {
     createCepItem(cepData);
   });
-}
+};
 
 // reusable functions
 function normalizeString(str) {
-  return str.replace(/\D/g, '');
-};
+  return str.replace(/\D/g, "");
+}
 
 function toggleMainContent() {
   document.querySelector(".main-content__text").classList.toggle("disable");
   document.querySelector(".main-content__table").classList.toggle("disable");
   document.querySelector(".main-content__actions").classList.toggle("disable");
-};
+}
 
 function controlInput(e, targetInput) {
   let inputValue = normalizeString(e.target.value.trim());
@@ -35,37 +35,41 @@ function controlInput(e, targetInput) {
   }
 
   targetInput.value = inputValue;
-};
+}
 
 function goToCep(cep) {
   const currentCepItem = document.getElementById(cep);
 
-  currentCepItem.scrollIntoView({behavior: 'smooth'});
-};
+  currentCepItem.scrollIntoView({ behavior: "smooth" });
+}
 
 function focusCep(cep) {
   const currentCepItem = document.getElementById(cep);
 
-  currentCepItem.classList.add('focus');
+  currentCepItem.classList.add("focus");
 
   setTimeout(() => {
-    currentCepItem.classList.remove('focus');
+    currentCepItem.classList.remove("focus");
   }, 3000);
-};
+}
 
 // cep data manipulation functions
 async function getCep(cep) {
   const response = await fetch(endpoint.replace("enteredCep", cep));
 
   if (!response.ok) {
-    alert("Não foi possível fazer a busca do CEP, tente novamente mais tarde...");
+    alert(
+      "Não foi possível fazer a busca do CEP, tente novamente mais tarde..."
+    );
     return;
   }
 
   const data = await response.json();
-  
-  if(data.erro === "true") {
-    alert("CEP inexistente, busque por outro cep ou confira se há erro no existente.");
+
+  if (data.erro === "true") {
+    alert(
+      "CEP inexistente, busque por outro cep ou confira se há erro no existente."
+    );
     return;
   }
 
@@ -76,70 +80,74 @@ async function getCep(cep) {
     state: data.localidade,
     stateTag: data.uf,
   };
-  
+
   return newCep;
-};
+}
 
 function createCepItem(cep_data) {
-  const {cep, locality, district, stateTag, state} = cep_data;
+  const { cep, locality, district, stateTag, state } = cep_data;
   const tbody = document.querySelector("#main-content__tbody");
 
-  const tr = document.createElement('tr');
-  tr.classList.add('main-content__tbody-tr');
+  const tr = document.createElement("tr");
+  tr.classList.add("main-content__tbody-tr");
   tr.setAttribute("id", cep);
 
-  const cep_td = document.createElement('td');
-  cep_td.classList.add('main-content__tbody-td');
+  const cep_td = document.createElement("td");
+  cep_td.classList.add("main-content__tbody-td");
   cep_td.innerText = cep;
   tr.appendChild(cep_td);
 
-  const locality_td = document.createElement('td');
-  locality_td.classList.add('main-content__tbody-td');
+  const locality_td = document.createElement("td");
+  locality_td.classList.add("main-content__tbody-td");
   locality_td.innerText = locality;
   tr.appendChild(locality_td);
-  
-  const district_td = document.createElement('td');
-  district_td.classList.add('main-content__tbody-td');
+
+  const district_td = document.createElement("td");
+  district_td.classList.add("main-content__tbody-td");
   district_td.innerText = district;
   tr.appendChild(district_td);
 
-  const state_td = document.createElement('td');
-  state_td.classList.add('main-content__tbody-td');
+  const state_td = document.createElement("td");
+  state_td.classList.add("main-content__tbody-td");
   state_td.innerText = `${state} (${stateTag})`;
   tr.appendChild(state_td);
 
-  const remove_td = document.createElement('td');
-  remove_td.classList.add('main-content__tbody-td','main-content__tbody-td--remove');
+  const remove_td = document.createElement("td");
+  remove_td.classList.add(
+    "main-content__tbody-td",
+    "main-content__tbody-td--remove"
+  );
   remove_td.innerText = "X";
   remove_td.addEventListener("click", (e) => {
     tbody.removeChild(e.target.parentElement);
-    
+
     deleteCep(cep);
 
-    if (JSON.parse(localStorage.getItem("ceps")).length === 0) toggleMainContent();
+    if (JSON.parse(localStorage.getItem("ceps")).length === 0)
+      toggleMainContent();
   });
   tr.appendChild(remove_td);
 
   tbody.appendChild(tr);
-};
+}
 
 function cepExists(cep) {
   const localCeps = JSON.parse(localStorage.getItem("ceps"));
 
-  return !!localCeps?.find(cepData => cepData.cep === cep);
-};
+  return !!localCeps?.find((cepData) => cepData.cep === cep);
+}
 
 function deleteCep(cep) {
-  const newLocalCeps = 
-    JSON.parse(localStorage.getItem("ceps"))
-    .filter(obj => obj.cep !== cep);
+  const newLocalCeps = JSON.parse(localStorage.getItem("ceps")).filter(
+    (obj) => obj.cep !== cep
+  );
 
   localStorage.setItem("ceps", JSON.stringify(newLocalCeps));
-};
+}
 
 function deleteAllCeps() {
   localStorage.setItem("ceps", JSON.stringify([]));
-};
+}
 
 // header input control
 async function header_handleSubmit(e) {
@@ -148,7 +156,9 @@ async function header_handleSubmit(e) {
   const currentInputValue = header_cep_input.value;
 
   if (currentInputValue.length !== 8) {
-    alert("Por favor, insira um cep válido: 8 números e sem caracteres especiais.");
+    alert(
+      "Por favor, insira um cep válido: 8 números e sem caracteres especiais."
+    );
     return;
   }
 
@@ -160,13 +170,13 @@ async function header_handleSubmit(e) {
   }
 
   const newCep = await getCep(currentInputValue);
-  if(!newCep) return;
-  
-  createCepItem(newCep);
-  
-  const localCeps  = JSON.parse(localStorage.getItem("ceps"));
+  if (!newCep) return;
 
-  if(!localCeps || localCeps.length === 0) {
+  createCepItem(newCep);
+
+  const localCeps = JSON.parse(localStorage.getItem("ceps"));
+
+  if (!localCeps || localCeps.length === 0) {
     toggleMainContent();
     localStorage.setItem("ceps", JSON.stringify([newCep]));
   } else {
@@ -179,18 +189,20 @@ async function header_handleSubmit(e) {
   header_cep_input.value = "";
 }
 
-// list input control 
+// list input control
 function list_handleSubmit(e) {
   e.preventDefault();
 
   const currentInputValue = list_cep_input.value;
 
   if (currentInputValue.length !== 8) {
-    alert("Por favor, insira um cep válido: 8 números e sem caracteres especiais.");
+    alert(
+      "Por favor, insira um cep válido: 8 números e sem caracteres especiais."
+    );
     return;
   }
 
-  if(!cepExists(currentInputValue)) {
+  if (!cepExists(currentInputValue)) {
     alert("Cep não foi encontrado na lista.");
     return;
   }
@@ -201,15 +213,20 @@ function list_handleSubmit(e) {
 }
 
 //event listeners
-header_cep_input.addEventListener("input", (e) => controlInput(e, header_cep_input));
+header_cep_input.addEventListener("input", (e) =>
+  controlInput(e, header_cep_input)
+);
 header_btn_submit.addEventListener("click", header_handleSubmit);
 
-document.querySelector("#main-content__deleteAll-btn")
+document
+  .querySelector("#main-content__deleteAll-btn")
   .addEventListener("click", () => {
     document.querySelector("#main-content__tbody").innerHTML = "";
     deleteAllCeps();
     toggleMainContent();
   });
 
-list_cep_input.addEventListener("input", (e) => controlInput(e, list_cep_input));
+list_cep_input.addEventListener("input", (e) =>
+  controlInput(e, list_cep_input)
+);
 list_btn_submit.addEventListener("click", list_handleSubmit);
