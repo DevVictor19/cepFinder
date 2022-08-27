@@ -43,7 +43,7 @@ function goToCep(cep) {
   currentCepItem.scrollIntoView({behavior: 'smooth'});
 };
 
-function blurCep(cep) {
+function focusCep(cep) {
   const currentCepItem = document.getElementById(cep);
 
   currentCepItem.classList.add('focus');
@@ -155,7 +155,7 @@ async function header_handleSubmit(e) {
   if (cepExists(currentInputValue)) {
     alert("CEP já pesquisado. Iremos te mostrar o cep destacando-o na lista.");
     goToCep(currentInputValue);
-    blurCep(currentInputValue);
+    focusCep(currentInputValue);
     return;
   }
 
@@ -175,7 +175,7 @@ async function header_handleSubmit(e) {
   }
 
   goToCep(currentInputValue);
-  blurCep(currentInputValue);
+  focusCep(currentInputValue);
   header_cep_input.value = "";
 }
 
@@ -196,7 +196,7 @@ function list_handleSubmit(e) {
   }
 
   goToCep(currentInputValue);
-  blurCep(currentInputValue);
+  focusCep(currentInputValue);
   list_cep_input.value = "";
 }
 
