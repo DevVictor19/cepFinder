@@ -5,7 +5,16 @@ const list_btn_submit = document.querySelector("#main-content__actions-btn");
 
 const endpoint = "https://viacep.com.br/ws/enteredCep/json/"
 
-window.onload = renderAllCeps;
+window.onload = function() {
+  const localCeps  = JSON.parse(localStorage.getItem("ceps"));
+  if(!localCeps || localCeps.length === 0) return;
+
+  toggleMainContent();
+
+  localCeps.forEach(cepData => {
+    createCep(cepData);
+  });
+}
 
 // reusable functions
 function normalizeString(str) {
@@ -130,17 +139,6 @@ function deleteCep(cep) {
 
 function deleteAllCeps() {
   localStorage.setItem("ceps", JSON.stringify([]));
-};
-
-function renderAllCeps() {
-  const localCeps  = JSON.parse(localStorage.getItem("ceps"));
-  if(!localCeps || localCeps.length === 0) return;
-
-  toggleMainContent();
-
-  localCeps.forEach(cepData => {
-    createCep(cepData);
-  });
 };
 
 // header input control
