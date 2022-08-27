@@ -188,11 +188,11 @@ function list_handleSubmit() {
 }
 
 //event listeners
-header_cep_input.addEventListener("keyup", (e) => controlInput(e, header_cep_input));
+header_cep_input.addEventListener("input", (e) => controlInput(e, header_cep_input));
 header_btn_submit.addEventListener("click", header_handleSubmit);
 
 document.querySelector("#main-content__deleteAll-btn")
   .addEventListener("click", deleteAllCeps);
 
-list_cep_input.addEventListener("keyup", (e) => controlInput(e, list_cep_input));
+list_cep_input.addEventListener("input", (e) => controlInput(e, list_cep_input));
 list_btn_submit.addEventListener("click", list_handleSubmit);
