@@ -144,7 +144,9 @@ function renderAllCeps() {
 };
 
 // header input control
-async function header_handleSubmit() {
+async function header_handleSubmit(e) {
+  e.preventDefault();
+
   const currentInputValue = header_cep_input.value;
 
   if (currentInputValue.length !== 8) {
@@ -176,10 +178,13 @@ async function header_handleSubmit() {
 
   goToCep(currentInputValue);
   blurCep(currentInputValue);
+  header_cep_input.value = "";
 }
 
 // list input control 
-function list_handleSubmit() {
+function list_handleSubmit(e) {
+  e.preventDefault();
+
   const currentInputValue = list_cep_input.value;
 
   if (currentInputValue.length !== 8) {
@@ -194,6 +199,7 @@ function list_handleSubmit() {
 
   goToCep(currentInputValue);
   blurCep(currentInputValue);
+  header_cep_input.value = "";
 }
 
 //event listeners
