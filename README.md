@@ -7,6 +7,7 @@ Feita no programa Dev For Tech 2 - Gama Academy
 - Renderizar CEP numa tabela 
 - Deletar CEP específico 
 - Deletar Todos os CEP's
+- Buscar CEP na lista de CEP's pesquisados
 - Guardar resultados no localStorage 
 - Renderizar CEP's já pesquisados ao voltar à aplicação 
 
