@@ -191,13 +191,13 @@ function list_handleSubmit(e) {
   }
 
   if(!cepExists(currentInputValue)) {
-    alert("Cep não foi encontrado na lista. Tente buscar por esse CEP no canto superior direito.");
+    alert("Cep não foi encontrado na lista.");
     return;
   }
 
   goToCep(currentInputValue);
   blurCep(currentInputValue);
-  header_cep_input.value = "";
+  list_cep_input.value = "";
 }
 
 //event listeners
