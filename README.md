@@ -4,7 +4,7 @@ Feita no programa Dev For Tech 2 - Gama Academy
 
 ## Features 
 - Buscar CEP
-- Renderiar CEP numa tabela 
+- Renderizar CEP numa tabela 
 - Deletar CEP específico 
 - Deletar Todos os CEP's
 - Guardar resultados no localStorage 
