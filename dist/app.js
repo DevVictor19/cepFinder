@@ -35,57 +35,38 @@ class Api {
         });
     }
 }
-const DUMMY_CEPS = [
-    {
-        cep: "416350",
-        district: "ba",
-        state: "teste",
-        locality: "teste",
-        stateTag: "teste",
-    },
-    {
-        cep: "416250",
-        district: "ba",
-        state: "teste",
-        locality: "teste",
-        stateTag: "teste",
-    },
-    {
-        cep: "413350",
-        district: "ba",
-        state: "teste",
-        locality: "teste",
-        stateTag: "teste",
-    },
-    {
-        cep: "416150",
-        district: "ba",
-        state: "teste",
-        locality: "teste",
-        stateTag: "teste",
-    },
-    {
-        cep: "419350",
-        district: "ba",
-        state: "teste",
-        locality: "teste",
-        stateTag: "teste",
-    },
-];
+class AppStorage {
+    constructor(localStName) {
+        this.localStName = localStName;
+        this.localCeps = JSON.parse(localStorage.getItem(this.localStName));
+    }
+    get ceps() {
+        return [...this.localCeps];
+    }
+    updateCeps(newCeps) {
+        localStorage.setItem(this.localStName, JSON.stringify(newCeps));
+    }
+}
+const CepsAppStorage = new AppStorage("ceps");
 class CepList {
     constructor() {
         this.tableTargetElement = document.querySelector(".main-content__table");
         this.tbodyTargetElement = document.getElementById("main-content__tbody");
         this.pTargetElement = document.querySelector(".main-content__text");
         this.actionsDisplayTargetElement = document.querySelector(".main-content__actions");
-        this.currentCeps = DUMMY_CEPS;
-        if (this.currentCeps.length > 0) {
-            this.renderAllCeps();
+        if (CepsAppStorage.ceps.length > 0) {
+            this.render(CepsAppStorage.ceps);
             this.toggleTableElements();
         }
     }
-    renderAllCeps() {
-        for (let cep of this.currentCeps) {
+    addNewCep(newCep) {
+        if (CepsAppStorage.ceps.length === 0) {
+            this.toggleTableElements();
+        }
+        this.createCepRowElement(newCep);
+    }
+    render(ceps) {
+        for (let cep of ceps) {
             this.createCepRowElement(cep);
         }
     }
@@ -119,4 +100,15 @@ class CepList {
     }
 }
 const ceps = new CepList();
+const api = new Api();
+const handleHeaderInputSubmits = (event) => __awaiter(void 0, void 0, void 0, function* () {
+    event.preventDefault();
+    const headerInput = document.getElementById("main-header__input-cep");
+    const newCep = yield api.findCep(headerInput.value);
+    if (newCep) {
+        ceps.addNewCep(newCep);
+    }
+});
+const headerForm = (document.querySelector(".main-header__form"));
+headerForm.addEventListener("submit", handleHeaderInputSubmits);
 //# sourceMappingURL=app.js.map

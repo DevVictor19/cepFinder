@@ -40,50 +40,29 @@ class Api {
   }
 }
 
-const DUMMY_CEPS: ICep[] = [
-  {
-    cep: "416350",
-    district: "ba",
-    state: "teste",
-    locality: "teste",
-    stateTag: "teste",
-  },
-  {
-    cep: "416250",
-    district: "ba",
-    state: "teste",
-    locality: "teste",
-    stateTag: "teste",
-  },
-  {
-    cep: "413350",
-    district: "ba",
-    state: "teste",
-    locality: "teste",
-    stateTag: "teste",
-  },
-  {
-    cep: "416150",
-    district: "ba",
-    state: "teste",
-    locality: "teste",
-    stateTag: "teste",
-  },
-  {
-    cep: "419350",
-    district: "ba",
-    state: "teste",
-    locality: "teste",
-    stateTag: "teste",
-  },
-];
+class AppStorage<T> {
+  private localCeps: T[];
+
+  constructor(private localStName: string) {
+    this.localCeps = JSON.parse(localStorage.getItem(this.localStName)!);
+  }
+
+  get ceps() {
+    return [...this.localCeps];
+  }
+
+  updateCeps(newCeps: T[]) {
+    localStorage.setItem(this.localStName, JSON.stringify(newCeps));
+  }
+}
+
+const CepsAppStorage = new AppStorage<ICep>("ceps");
 
 class CepList {
   private tableTargetElement: HTMLTableElement;
   private tbodyTargetElement: HTMLTableElement;
   private pTargetElement: HTMLParagraphElement;
   private actionsDisplayTargetElement: HTMLDivElement;
-  private currentCeps: ICep[];
 
   constructor() {
     this.tableTargetElement = document.querySelector(
@@ -102,16 +81,21 @@ class CepList {
       ".main-content__actions"
     ) as HTMLDivElement;
 
-    this.currentCeps = DUMMY_CEPS;
-
-    if (this.currentCeps.length > 0) {
-      this.renderAllCeps();
+    if (CepsAppStorage.ceps.length > 0) {
+      this.render(CepsAppStorage.ceps);
       this.toggleTableElements();
     }
   }
 
-  private renderAllCeps() {
-    for (let cep of this.currentCeps) {
+  addNewCep(newCep: ICep) {
+    if (CepsAppStorage.ceps.length === 0) {
+      this.toggleTableElements();
+    }
+    this.createCepRowElement(newCep);
+  }
+
+  private render(ceps: ICep[]) {
+    for (let cep of ceps) {
       this.createCepRowElement(cep);
     }
   }
@@ -154,3 +138,24 @@ class CepList {
 }
 
 const ceps = new CepList();
+const api = new Api();
+
+const handleHeaderInputSubmits = async (event: SubmitEvent) => {
+  event.preventDefault();
+
+  const headerInput = document.getElementById(
+    "main-header__input-cep"
+  ) as HTMLInputElement;
+
+  const newCep = await api.findCep(headerInput.value);
+
+  if (newCep) {
+    ceps.addNewCep(newCep);
+  }
+};
+
+const headerForm = <HTMLFormElement>(
+  document.querySelector(".main-header__form")
+);
+
+headerForm.addEventListener("submit", handleHeaderInputSubmits);
