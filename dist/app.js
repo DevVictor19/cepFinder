@@ -12,7 +12,7 @@ class Api {
     constructor() {
         this.endpoint = "https://viacep.com.br/ws/enteredCep/json/";
     }
-    getCep(cep) {
+    findCep(cep) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield fetch(this.endpoint.replace("enteredCep", cep));
             if (!response.ok) {
@@ -35,11 +35,52 @@ class Api {
         });
     }
 }
-class CepList extends Api {
-    fetchCep(cep) {
-        this.getCep(cep).then((response) => console.log(response));
+class CepList {
+    constructor() {
+        this.tableTargetElement = document.querySelector(".main-content__table");
+        this.tbodyTargetElement = document.getElementById("main-content__tbody");
+        this.pTargetElement = document.querySelector(".main-content__text");
+        this.actionsDisplayTargetElement = document.querySelector(".main-content__actions");
+    }
+    createCepRowElement(cep_data) {
+        const { cep, locality, district, stateTag, state } = cep_data;
+        const tr = document.createElement("tr");
+        tr.classList.add("main-content__tbody-tr");
+        tr.setAttribute("id", cep);
+        const cep_td = document.createElement("td");
+        cep_td.classList.add("main-content__tbody-td");
+        cep_td.innerText = cep;
+        tr.appendChild(cep_td);
+        const locality_td = document.createElement("td");
+        locality_td.classList.add("main-content__tbody-td");
+        locality_td.innerText = locality;
+        tr.appendChild(locality_td);
+        const district_td = document.createElement("td");
+        district_td.classList.add("main-content__tbody-td");
+        district_td.innerText = district;
+        tr.appendChild(district_td);
+        const state_td = document.createElement("td");
+        state_td.classList.add("main-content__tbody-td");
+        state_td.innerText = `${state} (${stateTag})`;
+        tr.appendChild(state_td);
+        this.tbodyTargetElement.appendChild(tr);
+    }
+    toggleTableElements() {
+        this.pTargetElement.classList.toggle("disable");
+        this.tableTargetElement.classList.toggle("disable");
+        this.actionsDisplayTargetElement.classList.toggle("disable");
     }
 }
-const cep_list = new CepList();
-cep_list.fetchCep("41635210");
+const header__form = document.querySelector(".main-header__form");
+header__form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const cep_input = document.getElementById("main-header__input-cep");
+    const api = new Api();
+    const cepList = new CepList();
+    api.findCep(cep_input.value).then((response) => {
+        if (response != null) {
+            cepList.createCepRowElement(response);
+        }
+    });
+});
 //# sourceMappingURL=app.js.map
