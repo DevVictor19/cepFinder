@@ -6,6 +6,10 @@ interface ICep {
   stateTag: string;
 }
 
+function normalizeString(str: string) {
+  return str.replace(/\D/g, "");
+}
+
 class Api {
   private endpoint = "https://viacep.com.br/ws/enteredCep/json/";
 
@@ -29,7 +33,7 @@ class Api {
     }
 
     const newCep: ICep = {
-      cep: data.cep,
+      cep: normalizeString(data.cep),
       district: data.bairro,
       locality: data.logradouro,
       state: data.localidade,
@@ -40,7 +44,9 @@ class Api {
   }
 }
 
-abstract class AppStorage<T> {
+const api = new Api();
+
+class AppStorage<T> {
   private storageName: string;
 
   constructor(storageName: string) {
@@ -63,15 +69,15 @@ abstract class AppStorage<T> {
   }
 }
 
-class CepList extends AppStorage<ICep> {
+const cepStorage = new AppStorage<ICep>("ceps");
+
+class CepList {
   private tableTargetElement: HTMLTableElement;
   private tbodyTargetElement: HTMLTableElement;
   private pTargetElement: HTMLParagraphElement;
   private actionsDisplayTargetElement: HTMLDivElement;
 
   constructor() {
-    super("ceps");
-
     this.tableTargetElement = document.querySelector(
       ".main-content__table"
     ) as HTMLTableElement;
@@ -88,26 +94,26 @@ class CepList extends AppStorage<ICep> {
       ".main-content__actions"
     ) as HTMLDivElement;
 
-    if (this.localItems.length > 0) {
-      this.render(this.localItems);
+    if (cepStorage.localItems.length > 0) {
+      this.render(cepStorage.localItems);
       this.toggleTableElements();
     }
   }
 
   addNewCep(newCep: ICep) {
-    if (this.localItems.length === 0) {
+    if (cepStorage.localItems.length === 0) {
       this.toggleTableElements();
     }
     this.createCepRowElement(newCep);
-    this.insertNewLocalItem(newCep);
+    cepStorage.insertNewLocalItem(newCep);
   }
 
   removeCep(cep: string) {
     this.tbodyTargetElement.removeChild(document.getElementById(cep)!);
-    const newCeps = this.localItems.filter(
+    const newCeps = cepStorage.localItems.filter(
       (cep_object) => cep_object.cep !== cep
     );
-    this.localItems = newCeps;
+    cepStorage.localItems = newCeps;
   }
 
   private render(ceps: ICep[]) {
@@ -166,24 +172,54 @@ class CepList extends AppStorage<ICep> {
 }
 
 const ceps = new CepList();
-const api = new Api();
 
-const handleHeaderInputSubmits = async (event: SubmitEvent) => {
-  event.preventDefault();
+function controlInput(e: Event) {
+  const targetInput = e.target! as HTMLInputElement;
 
-  const headerInput = document.getElementById(
-    "main-header__input-cep"
-  ) as HTMLInputElement;
+  let inputValue = normalizeString(targetInput.value.trim());
 
-  const newCep = await api.findCep(headerInput.value);
-
-  if (newCep) {
-    ceps.addNewCep(newCep);
+  if (inputValue.length > 8) {
+    inputValue = inputValue.slice(0, -1);
   }
-};
 
-const headerForm = <HTMLFormElement>(
-  document.querySelector(".main-header__form")
-);
+  targetInput.value = inputValue;
+}
 
-headerForm.addEventListener("submit", handleHeaderInputSubmits);
+// elements selection
+const header_inputText = document.getElementById(
+  "main-header__input-cep"
+) as HTMLInputElement;
+
+const header_form = document.querySelector(
+  ".main-header__form"
+) as HTMLFormElement;
+
+// handlers
+async function header_form_submitHandler(e: SubmitEvent) {
+  e.preventDefault();
+
+  if (header_inputText.value.length !== 8) {
+    alert("Insira um cep válido! Um cep deve conter 8 digitos");
+    return;
+  }
+
+  if (
+    cepStorage.localItems.find((item) => item.cep === header_inputText.value)
+  ) {
+    alert("Cep já pesquisado, verifique na lista");
+    return;
+  }
+
+  const newCep = await api.findCep(header_inputText.value);
+
+  if (!newCep) {
+    alert("Algo deu errado... tente novamente.");
+    return;
+  }
+
+  ceps.addNewCep(newCep);
+}
+
+// events
+header_inputText.addEventListener("input", controlInput);
+header_form.addEventListener("submit", header_form_submitHandler);

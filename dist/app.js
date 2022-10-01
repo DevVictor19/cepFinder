@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+function normalizeString(str) {
+    return str.replace(/\D/g, "");
+}
 class Api {
     constructor() {
         this.endpoint = "https://viacep.com.br/ws/enteredCep/json/";
@@ -25,7 +28,7 @@ class Api {
                 return;
             }
             const newCep = {
-                cep: data.cep,
+                cep: normalizeString(data.cep),
                 district: data.bairro,
                 locality: data.logradouro,
                 state: data.localidade,
@@ -35,6 +38,7 @@ class Api {
         });
     }
 }
+const api = new Api();
 class AppStorage {
     constructor(storageName) {
         this.storageName = storageName;
@@ -49,29 +53,29 @@ class AppStorage {
         localStorage.setItem(this.storageName, JSON.stringify(newItems));
     }
 }
-class CepList extends AppStorage {
+const cepStorage = new AppStorage("ceps");
+class CepList {
     constructor() {
-        super("ceps");
         this.tableTargetElement = document.querySelector(".main-content__table");
         this.tbodyTargetElement = document.getElementById("main-content__tbody");
         this.pTargetElement = document.querySelector(".main-content__text");
         this.actionsDisplayTargetElement = document.querySelector(".main-content__actions");
-        if (this.localItems.length > 0) {
-            this.render(this.localItems);
+        if (cepStorage.localItems.length > 0) {
+            this.render(cepStorage.localItems);
             this.toggleTableElements();
         }
     }
     addNewCep(newCep) {
-        if (this.localItems.length === 0) {
+        if (cepStorage.localItems.length === 0) {
             this.toggleTableElements();
         }
         this.createCepRowElement(newCep);
-        this.insertNewLocalItem(newCep);
+        cepStorage.insertNewLocalItem(newCep);
     }
     removeCep(cep) {
         this.tbodyTargetElement.removeChild(document.getElementById(cep));
-        const newCeps = this.localItems.filter((cep_object) => cep_object.cep !== cep);
-        this.localItems = newCeps;
+        const newCeps = cepStorage.localItems.filter((cep_object) => cep_object.cep !== cep);
+        cepStorage.localItems = newCeps;
     }
     render(ceps) {
         for (let cep of ceps) {
@@ -116,15 +120,38 @@ class CepList extends AppStorage {
     }
 }
 const ceps = new CepList();
-const api = new Api();
-const handleHeaderInputSubmits = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    event.preventDefault();
-    const headerInput = document.getElementById("main-header__input-cep");
-    const newCep = yield api.findCep(headerInput.value);
-    if (newCep) {
-        ceps.addNewCep(newCep);
+function controlInput(e) {
+    const targetInput = e.target;
+    let inputValue = normalizeString(targetInput.value.trim());
+    if (inputValue.length > 8) {
+        inputValue = inputValue.slice(0, -1);
     }
-});
-const headerForm = (document.querySelector(".main-header__form"));
-headerForm.addEventListener("submit", handleHeaderInputSubmits);
+    targetInput.value = inputValue;
+}
+// elements selection
+const header_inputText = document.getElementById("main-header__input-cep");
+const header_form = document.querySelector(".main-header__form");
+// handlers
+function header_form_submitHandler(e) {
+    return __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        if (header_inputText.value.length !== 8) {
+            alert("Insira um cep válido! Um cep deve conter 8 digitos");
+            return;
+        }
+        if (cepStorage.localItems.find((item) => item.cep === header_inputText.value)) {
+            alert("Cep já pesquisado, verifique na lista");
+            return;
+        }
+        const newCep = yield api.findCep(header_inputText.value);
+        if (!newCep) {
+            alert("Algo deu errado... tente novamente.");
+            return;
+        }
+        ceps.addNewCep(newCep);
+    });
+}
+// events
+header_inputText.addEventListener("input", controlInput);
+header_form.addEventListener("submit", header_form_submitHandler);
 //# sourceMappingURL=app.js.map
