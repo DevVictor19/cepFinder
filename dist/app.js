@@ -35,12 +35,59 @@ class Api {
         });
     }
 }
+const DUMMY_CEPS = [
+    {
+        cep: "416350",
+        district: "ba",
+        state: "teste",
+        locality: "teste",
+        stateTag: "teste",
+    },
+    {
+        cep: "416250",
+        district: "ba",
+        state: "teste",
+        locality: "teste",
+        stateTag: "teste",
+    },
+    {
+        cep: "413350",
+        district: "ba",
+        state: "teste",
+        locality: "teste",
+        stateTag: "teste",
+    },
+    {
+        cep: "416150",
+        district: "ba",
+        state: "teste",
+        locality: "teste",
+        stateTag: "teste",
+    },
+    {
+        cep: "419350",
+        district: "ba",
+        state: "teste",
+        locality: "teste",
+        stateTag: "teste",
+    },
+];
 class CepList {
     constructor() {
         this.tableTargetElement = document.querySelector(".main-content__table");
         this.tbodyTargetElement = document.getElementById("main-content__tbody");
         this.pTargetElement = document.querySelector(".main-content__text");
         this.actionsDisplayTargetElement = document.querySelector(".main-content__actions");
+        this.currentCeps = DUMMY_CEPS;
+        if (this.currentCeps.length > 0) {
+            this.renderAllCeps();
+            this.toggleTableElements();
+        }
+    }
+    renderAllCeps() {
+        for (let cep of this.currentCeps) {
+            this.createCepRowElement(cep);
+        }
     }
     createCepRowElement(cep_data) {
         const { cep, locality, district, stateTag, state } = cep_data;
@@ -71,16 +118,5 @@ class CepList {
         this.actionsDisplayTargetElement.classList.toggle("disable");
     }
 }
-const header__form = document.querySelector(".main-header__form");
-header__form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const cep_input = document.getElementById("main-header__input-cep");
-    const api = new Api();
-    const cepList = new CepList();
-    api.findCep(cep_input.value).then((response) => {
-        if (response != null) {
-            cepList.createCepRowElement(response);
-        }
-    });
-});
+const ceps = new CepList();
 //# sourceMappingURL=app.js.map

@@ -40,11 +40,50 @@ class Api {
   }
 }
 
+const DUMMY_CEPS: ICep[] = [
+  {
+    cep: "416350",
+    district: "ba",
+    state: "teste",
+    locality: "teste",
+    stateTag: "teste",
+  },
+  {
+    cep: "416250",
+    district: "ba",
+    state: "teste",
+    locality: "teste",
+    stateTag: "teste",
+  },
+  {
+    cep: "413350",
+    district: "ba",
+    state: "teste",
+    locality: "teste",
+    stateTag: "teste",
+  },
+  {
+    cep: "416150",
+    district: "ba",
+    state: "teste",
+    locality: "teste",
+    stateTag: "teste",
+  },
+  {
+    cep: "419350",
+    district: "ba",
+    state: "teste",
+    locality: "teste",
+    stateTag: "teste",
+  },
+];
+
 class CepList {
   private tableTargetElement: HTMLTableElement;
   private tbodyTargetElement: HTMLTableElement;
   private pTargetElement: HTMLParagraphElement;
   private actionsDisplayTargetElement: HTMLDivElement;
+  private currentCeps: ICep[];
 
   constructor() {
     this.tableTargetElement = document.querySelector(
@@ -62,9 +101,22 @@ class CepList {
     this.actionsDisplayTargetElement = document.querySelector(
       ".main-content__actions"
     ) as HTMLDivElement;
+
+    this.currentCeps = DUMMY_CEPS;
+
+    if (this.currentCeps.length > 0) {
+      this.renderAllCeps();
+      this.toggleTableElements();
+    }
   }
 
-  createCepRowElement(cep_data: ICep) {
+  private renderAllCeps() {
+    for (let cep of this.currentCeps) {
+      this.createCepRowElement(cep);
+    }
+  }
+
+  private createCepRowElement(cep_data: ICep) {
     const { cep, locality, district, stateTag, state } = cep_data;
 
     const tr = document.createElement("tr");
@@ -94,29 +146,11 @@ class CepList {
     this.tbodyTargetElement.appendChild(tr);
   }
 
-  toggleTableElements() {
+  private toggleTableElements() {
     this.pTargetElement.classList.toggle("disable");
     this.tableTargetElement.classList.toggle("disable");
     this.actionsDisplayTargetElement.classList.toggle("disable");
   }
 }
 
-const header__form = document.querySelector(
-  ".main-header__form"
-) as HTMLFormElement;
-
-header__form.addEventListener("submit", (event: SubmitEvent) => {
-  event.preventDefault();
-  const cep_input = document.getElementById(
-    "main-header__input-cep"
-  ) as HTMLInputElement;
-
-  const api = new Api();
-  const cepList = new CepList();
-
-  api.findCep(cep_input.value).then((response) => {
-    if (response != null) {
-      cepList.createCepRowElement(response);
-    }
-  });
-});
+const ceps = new CepList();
