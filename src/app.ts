@@ -110,10 +110,37 @@ class CepList {
 
   removeCep(cep: string) {
     this.tbodyTargetElement.removeChild(document.getElementById(cep)!);
+
     const newCeps = cepStorage.localItems.filter(
       (cep_object) => cep_object.cep !== cep
     );
+
+    if (newCeps.length === 0) {
+      this.toggleTableElements();
+    }
+
     cepStorage.localItems = newCeps;
+  }
+
+  resetCeps() {
+    cepStorage.localItems = [];
+    this.toggleTableElements();
+  }
+
+  goToCep(cep: string) {
+    (document.getElementById(cep) as HTMLTableCellElement).scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+
+  focusCep(cep: string) {
+    const cepEl = document.getElementById(cep) as HTMLTableCellElement;
+
+    cepEl.classList.add("focus");
+
+    setTimeout(() => {
+      cepEl.classList.remove("focus");
+    }, 3000);
   }
 
   private render(ceps: ICep[]) {
@@ -194,6 +221,14 @@ const header_form = document.querySelector(
   ".main-header__form"
 ) as HTMLFormElement;
 
+const actions_inputText = document.getElementById(
+  "main-content__actions-input"
+) as HTMLFormElement;
+
+const actions_form = document.querySelector(
+  ".main-content__actions-form"
+) as HTMLFormElement;
+
 // handlers
 async function header_form_submitHandler(e: SubmitEvent) {
   e.preventDefault();
@@ -218,8 +253,36 @@ async function header_form_submitHandler(e: SubmitEvent) {
   }
 
   ceps.addNewCep(newCep);
+  ceps.goToCep(newCep.cep);
+  ceps.focusCep(newCep.cep);
+}
+
+function action_form_submitHandler(e: SubmitEvent) {
+  e.preventDefault();
+
+  if (actions_inputText.value.length !== 8) {
+    alert("Insira um cep válido! Um cep deve conter 8 digitos");
+    return;
+  }
+
+  if (
+    !cepStorage.localItems.find((item) => item.cep === actions_inputText.value)
+  ) {
+    alert("Cep não existe na lista, pesquise na barra superior.");
+    return;
+  }
+
+  ceps.goToCep(actions_inputText.value);
+  ceps.focusCep(actions_inputText.value);
 }
 
 // events
 header_inputText.addEventListener("input", controlInput);
 header_form.addEventListener("submit", header_form_submitHandler);
+
+(
+  document.getElementById("main-content__deleteAll-btn") as HTMLButtonElement
+).addEventListener("click", () => ceps.resetCeps());
+
+actions_inputText.addEventListener("input", controlInput);
+actions_form.addEventListener("submit", action_form_submitHandler);
