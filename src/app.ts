@@ -40,31 +40,38 @@ class Api {
   }
 }
 
-class AppStorage<T> {
-  private localCeps: T[];
+abstract class AppStorage<T> {
+  private storageName: string;
 
-  constructor(private localStName: string) {
-    this.localCeps = JSON.parse(localStorage.getItem(this.localStName)!);
+  constructor(storageName: string) {
+    this.storageName = storageName;
   }
 
-  get ceps() {
-    return [...this.localCeps];
+  insertNewLocalItem(newItem: T) {
+    localStorage.setItem(
+      this.storageName,
+      JSON.stringify([...this.localItems, newItem])
+    );
   }
 
-  updateCeps(newCeps: T[]) {
-    localStorage.setItem(this.localStName, JSON.stringify(newCeps));
+  get localItems(): T[] {
+    return JSON.parse(localStorage.getItem(this.storageName)!);
+  }
+
+  set localItems(newItems: T[]) {
+    localStorage.setItem(this.storageName, JSON.stringify(newItems));
   }
 }
 
-const CepsAppStorage = new AppStorage<ICep>("ceps");
-
-class CepList {
+class CepList extends AppStorage<ICep> {
   private tableTargetElement: HTMLTableElement;
   private tbodyTargetElement: HTMLTableElement;
   private pTargetElement: HTMLParagraphElement;
   private actionsDisplayTargetElement: HTMLDivElement;
 
   constructor() {
+    super("ceps");
+
     this.tableTargetElement = document.querySelector(
       ".main-content__table"
     ) as HTMLTableElement;
@@ -81,17 +88,26 @@ class CepList {
       ".main-content__actions"
     ) as HTMLDivElement;
 
-    if (CepsAppStorage.ceps.length > 0) {
-      this.render(CepsAppStorage.ceps);
+    if (this.localItems.length > 0) {
+      this.render(this.localItems);
       this.toggleTableElements();
     }
   }
 
   addNewCep(newCep: ICep) {
-    if (CepsAppStorage.ceps.length === 0) {
+    if (this.localItems.length === 0) {
       this.toggleTableElements();
     }
     this.createCepRowElement(newCep);
+    this.insertNewLocalItem(newCep);
+  }
+
+  removeCep(cep: string) {
+    this.tbodyTargetElement.removeChild(document.getElementById(cep)!);
+    const newCeps = this.localItems.filter(
+      (cep_object) => cep_object.cep !== cep
+    );
+    this.localItems = newCeps;
   }
 
   private render(ceps: ICep[]) {
@@ -126,6 +142,18 @@ class CepList {
     state_td.classList.add("main-content__tbody-td");
     state_td.innerText = `${state} (${stateTag})`;
     tr.appendChild(state_td);
+
+    const remove_td = document.createElement("td");
+    remove_td.classList.add(
+      "main-content__tbody-td",
+      "main-content__tbody-td--remove"
+    );
+    remove_td.innerText = "X";
+    remove_td.addEventListener("click", (e: MouseEvent) => {
+      const targetEl = e.target as HTMLElement;
+      this.removeCep(targetEl.parentElement!.id);
+    });
+    tr.appendChild(remove_td);
 
     this.tbodyTargetElement.appendChild(tr);
   }

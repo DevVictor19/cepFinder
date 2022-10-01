@@ -36,34 +36,42 @@ class Api {
     }
 }
 class AppStorage {
-    constructor(localStName) {
-        this.localStName = localStName;
-        this.localCeps = JSON.parse(localStorage.getItem(this.localStName));
+    constructor(storageName) {
+        this.storageName = storageName;
     }
-    get ceps() {
-        return [...this.localCeps];
+    insertNewLocalItem(newItem) {
+        localStorage.setItem(this.storageName, JSON.stringify([...this.localItems, newItem]));
     }
-    updateCeps(newCeps) {
-        localStorage.setItem(this.localStName, JSON.stringify(newCeps));
+    get localItems() {
+        return JSON.parse(localStorage.getItem(this.storageName));
+    }
+    set localItems(newItems) {
+        localStorage.setItem(this.storageName, JSON.stringify(newItems));
     }
 }
-const CepsAppStorage = new AppStorage("ceps");
-class CepList {
+class CepList extends AppStorage {
     constructor() {
+        super("ceps");
         this.tableTargetElement = document.querySelector(".main-content__table");
         this.tbodyTargetElement = document.getElementById("main-content__tbody");
         this.pTargetElement = document.querySelector(".main-content__text");
         this.actionsDisplayTargetElement = document.querySelector(".main-content__actions");
-        if (CepsAppStorage.ceps.length > 0) {
-            this.render(CepsAppStorage.ceps);
+        if (this.localItems.length > 0) {
+            this.render(this.localItems);
             this.toggleTableElements();
         }
     }
     addNewCep(newCep) {
-        if (CepsAppStorage.ceps.length === 0) {
+        if (this.localItems.length === 0) {
             this.toggleTableElements();
         }
         this.createCepRowElement(newCep);
+        this.insertNewLocalItem(newCep);
+    }
+    removeCep(cep) {
+        this.tbodyTargetElement.removeChild(document.getElementById(cep));
+        const newCeps = this.localItems.filter((cep_object) => cep_object.cep !== cep);
+        this.localItems = newCeps;
     }
     render(ceps) {
         for (let cep of ceps) {
@@ -91,6 +99,14 @@ class CepList {
         state_td.classList.add("main-content__tbody-td");
         state_td.innerText = `${state} (${stateTag})`;
         tr.appendChild(state_td);
+        const remove_td = document.createElement("td");
+        remove_td.classList.add("main-content__tbody-td", "main-content__tbody-td--remove");
+        remove_td.innerText = "X";
+        remove_td.addEventListener("click", (e) => {
+            const targetEl = e.target;
+            this.removeCep(targetEl.parentElement.id);
+        });
+        tr.appendChild(remove_td);
         this.tbodyTargetElement.appendChild(tr);
     }
     toggleTableElements() {
