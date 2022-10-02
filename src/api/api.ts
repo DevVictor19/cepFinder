@@ -1,3 +1,5 @@
+/// <reference path="../utils/normalize-string.ts" />
+
 namespace App {
   export class Api {
     private endpoint = "https://viacep.com.br/ws/enteredCep/json/";

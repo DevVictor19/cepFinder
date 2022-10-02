@@ -116,6 +116,13 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    function normalizeString(str) {
+        return str.replace(/\D/g, "");
+    }
+    App.normalizeString = normalizeString;
+})(App || (App = {}));
+var App;
+(function (App) {
     class Api {
         constructor() {
             this.endpoint = "https://viacep.com.br/ws/enteredCep/json/";
@@ -144,13 +151,6 @@ var App;
         }
     }
     App.Api = Api;
-})(App || (App = {}));
-var App;
-(function (App) {
-    function normalizeString(str) {
-        return str.replace(/\D/g, "");
-    }
-    App.normalizeString = normalizeString;
 })(App || (App = {}));
 var App;
 (function (App) {
