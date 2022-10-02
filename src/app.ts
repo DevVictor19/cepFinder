@@ -108,20 +108,6 @@ class CepList {
     cepStorage.insertNewLocalItem(newCep);
   }
 
-  removeCep(cep: string) {
-    this.tbodyTargetElement.removeChild(document.getElementById(cep)!);
-
-    const newCeps = cepStorage.localItems.filter(
-      (cep_object) => cep_object.cep !== cep
-    );
-
-    if (newCeps.length === 0) {
-      this.toggleTableElements();
-    }
-
-    cepStorage.localItems = newCeps;
-  }
-
   resetCeps() {
     cepStorage.localItems = [];
     this.toggleTableElements();
@@ -147,6 +133,20 @@ class CepList {
     for (let cep of ceps) {
       this.createCepRowElement(cep);
     }
+  }
+
+  private removeCep(cep: string) {
+    this.tbodyTargetElement.removeChild(document.getElementById(cep)!);
+
+    const newCeps = cepStorage.localItems.filter(
+      (cep_object) => cep_object.cep !== cep
+    );
+
+    if (newCeps.length === 0) {
+      this.toggleTableElements();
+    }
+
+    cepStorage.localItems = newCeps;
   }
 
   private createCepRowElement(cep_data: ICep) {
@@ -241,6 +241,8 @@ async function header_form_submitHandler(e: SubmitEvent) {
   if (
     cepStorage.localItems.find((item) => item.cep === header_inputText.value)
   ) {
+    ceps.goToCep(header_inputText.value);
+    ceps.focusCep(header_inputText.value);
     alert("Cep já pesquisado, verifique na lista");
     return;
   }
@@ -255,6 +257,7 @@ async function header_form_submitHandler(e: SubmitEvent) {
   ceps.addNewCep(newCep);
   ceps.goToCep(newCep.cep);
   ceps.focusCep(newCep.cep);
+  header_inputText.value = "";
 }
 
 function action_form_submitHandler(e: SubmitEvent) {
@@ -274,6 +277,7 @@ function action_form_submitHandler(e: SubmitEvent) {
 
   ceps.goToCep(actions_inputText.value);
   ceps.focusCep(actions_inputText.value);
+  actions_inputText.value = "";
 }
 
 // events

@@ -72,14 +72,6 @@ class CepList {
         this.createCepRowElement(newCep);
         cepStorage.insertNewLocalItem(newCep);
     }
-    removeCep(cep) {
-        this.tbodyTargetElement.removeChild(document.getElementById(cep));
-        const newCeps = cepStorage.localItems.filter((cep_object) => cep_object.cep !== cep);
-        if (newCeps.length === 0) {
-            this.toggleTableElements();
-        }
-        cepStorage.localItems = newCeps;
-    }
     resetCeps() {
         cepStorage.localItems = [];
         this.toggleTableElements();
@@ -100,6 +92,14 @@ class CepList {
         for (let cep of ceps) {
             this.createCepRowElement(cep);
         }
+    }
+    removeCep(cep) {
+        this.tbodyTargetElement.removeChild(document.getElementById(cep));
+        const newCeps = cepStorage.localItems.filter((cep_object) => cep_object.cep !== cep);
+        if (newCeps.length === 0) {
+            this.toggleTableElements();
+        }
+        cepStorage.localItems = newCeps;
     }
     createCepRowElement(cep_data) {
         const { cep, locality, district, stateTag, state } = cep_data;
@@ -161,6 +161,8 @@ function header_form_submitHandler(e) {
             return;
         }
         if (cepStorage.localItems.find((item) => item.cep === header_inputText.value)) {
+            ceps.goToCep(header_inputText.value);
+            ceps.focusCep(header_inputText.value);
             alert("Cep já pesquisado, verifique na lista");
             return;
         }
@@ -172,6 +174,7 @@ function header_form_submitHandler(e) {
         ceps.addNewCep(newCep);
         ceps.goToCep(newCep.cep);
         ceps.focusCep(newCep.cep);
+        header_inputText.value = "";
     });
 }
 function action_form_submitHandler(e) {
@@ -186,6 +189,7 @@ function action_form_submitHandler(e) {
     }
     ceps.goToCep(actions_inputText.value);
     ceps.focusCep(actions_inputText.value);
+    actions_inputText.value = "";
 }
 // events
 header_inputText.addEventListener("input", controlInput);
