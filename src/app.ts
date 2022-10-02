@@ -5,6 +5,7 @@
 namespace App {
   // intances
   const ceps = new CepList();
+  const api = new Api();
 
   // elements selection
   const header_inputText = document.getElementById(

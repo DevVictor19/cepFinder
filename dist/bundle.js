@@ -143,7 +143,7 @@ var App;
             });
         }
     }
-    App.api = new Api();
+    App.Api = Api;
 })(App || (App = {}));
 var App;
 (function (App) {
@@ -167,6 +167,7 @@ var App;
 var App;
 (function (App) {
     const ceps = new App.CepList();
+    const api = new App.Api();
     const header_inputText = document.getElementById("main-header__input-cep");
     const header_form = document.querySelector(".main-header__form");
     const actions_inputText = document.getElementById("main-content__actions-input");
@@ -184,7 +185,7 @@ var App;
                 alert("Cep já pesquisado, verifique na lista");
                 return;
             }
-            const newCep = yield App.api.findCep(header_inputText.value);
+            const newCep = yield api.findCep(header_inputText.value);
             if (!newCep) {
                 alert("Algo deu errado... tente novamente.");
                 return;

@@ -1,5 +1,5 @@
 namespace App {
-  class Api {
+  export class Api {
     private endpoint = "https://viacep.com.br/ws/enteredCep/json/";
 
     async findCep(cep: string): Promise<void | ICep> {
@@ -32,6 +32,4 @@ namespace App {
       return newCep;
     }
   }
-
-  export const api = new Api();
 }
