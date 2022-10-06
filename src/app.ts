@@ -2,49 +2,33 @@ import "./styles.css";
 
 import { controlInput } from "./utils/control-input";
 
-abstract class ControledInput {
+class ControledForm {
   formElement: HTMLFormElement;
   inputElement: HTMLInputElement;
 
-  constructor(
-    formSelector: string,
-    inputSelector: string,
-    inputControlFn: (e: Event) => void
-  ) {
+  constructor(formSelector: string, inputSelector: string) {
     this.formElement = document.querySelector(formSelector) as HTMLFormElement;
     this.inputElement = document.querySelector(
       inputSelector
     ) as HTMLInputElement;
-
-    this.formElement.addEventListener("submit", this.submit.bind(this));
-    this.inputElement.addEventListener("input", inputControlFn);
   }
 
-  abstract submit(event: SubmitEvent): void;
-
-  protected resetValues() {
-    this.inputElement.value = "";
-  }
-}
-
-class HeaderForm extends ControledInput {
-  constructor(
-    formSelector: string,
-    inputSelector: string,
-    inputControlFn: (e: Event) => void
+  addEvent<T extends HTMLElement>(
+    event: keyof HTMLElementEventMap,
+    targetEl: T,
+    eventHandlerFn: (event: Event) => void
   ) {
-    super(formSelector, inputSelector, inputControlFn);
-  }
-
-  submit(event: SubmitEvent) {
-    event.preventDefault();
-    console.log("teste");
-    this.resetValues();
+    targetEl.addEventListener(event, eventHandlerFn);
   }
 }
 
-const headerForm = new HeaderForm(
+const headerForm = new ControledForm(
   ".main-header__form",
-  "#main-header__input-cep",
-  controlInput
+  "#main-header__input-cep"
 );
+
+headerForm.addEvent("input", headerForm.inputElement, controlInput);
+headerForm.addEvent("submit", headerForm.formElement, (e: Event) => {
+  e.preventDefault();
+  console.log("teste");
+});
