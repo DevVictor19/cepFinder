@@ -11,7 +11,7 @@ export class ControledForm {
     this.inputElements = inputs;
   }
 
-  addInputValidationHandler(
+  addInputControlHandler(
     inputName: keyof IInputElements,
     event: keyof HTMLElementEventMap,
     validateFn: (e: Event) => void
