@@ -1,7 +1,5 @@
 export class ConnectApi {
-  private apiUrl: string;
-
-  constructor(apiUrl: string) {
+  constructor(private apiUrl: string) {
     this.apiUrl = apiUrl;
   }
 
