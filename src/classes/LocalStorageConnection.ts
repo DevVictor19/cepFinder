@@ -1,6 +1,3 @@
-// criar uma nova classe para o state?
-// essa nova classe recebe
-
 import { IUpdatable } from "../models/updatable";
 
 export class LocalStorageConnection<T> implements IUpdatable {
