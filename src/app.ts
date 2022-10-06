@@ -1,34 +1,19 @@
 import "./styles.css";
 
+import { ControledForm } from "./classes/ControledForm";
 import { controlInput } from "./utils/control-input";
 
-class ControledForm {
-  formElement: HTMLFormElement;
-  inputElement: HTMLInputElement;
-
-  constructor(formSelector: string, inputSelector: string) {
-    this.formElement = document.querySelector(formSelector) as HTMLFormElement;
-    this.inputElement = document.querySelector(
-      inputSelector
-    ) as HTMLInputElement;
-  }
-
-  addEvent<T extends HTMLElement>(
-    event: keyof HTMLElementEventMap,
-    targetEl: T,
-    eventHandlerFn: (event: Event) => void
-  ) {
-    targetEl.addEventListener(event, eventHandlerFn);
-  }
-}
-
 const headerForm = new ControledForm(
-  ".main-header__form",
-  "#main-header__input-cep"
+  document.querySelector(".main-header__form") as HTMLFormElement,
+  {
+    cepInput: document.getElementById(
+      "main-header__input-cep"
+    ) as HTMLInputElement,
+  }
 );
 
-headerForm.addEvent("input", headerForm.inputElement, controlInput);
-headerForm.addEvent("submit", headerForm.formElement, (e: Event) => {
+headerForm.addInputValidationHandler("cepInput", "input", controlInput);
+headerForm.addSubmitHandler((e) => {
   e.preventDefault();
-  console.log("teste");
+  alert("header submit");
 });
