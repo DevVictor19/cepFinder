@@ -1,5 +1,5 @@
 interface ISlices {
-  [key: string]: {};
+  [key: string]: any;
 }
 
 export class State {
@@ -8,7 +8,7 @@ export class State {
 
   private constructor() {}
 
-  public static initialize(): State {
+  public static getInstace(): State {
     if (!State.instance) {
       State.instance = new State();
     }
@@ -16,7 +16,7 @@ export class State {
     return State.instance;
   }
 
-  createSlice(name: string, initialValue: object) {
+  createSlice(name: string, initialValue: any) {
     if (this.slices[name]) {
       this.dispatchError(
         "createSlice: you are trying to create an existing slice in state"
@@ -25,23 +25,18 @@ export class State {
     this.slices = { ...this.slices, [name]: initialValue };
   }
 
-  updateSlice(name: string, content: object) {
+  updateSlice<T>(name: string, callback: (stateSnapShot: T) => T) {
     if (!this.slices[name]) {
       this.dispatchError(
         "updateSlice: slice name does not match with any slice in state"
       );
     }
 
-    this.slices[name] = { ...content };
+    this.slices[name] = callback(this.slices[name]);
   }
 
-  getSlice<T extends object>(name: string): T {
-    if (!this.slices[name]) {
-      this.dispatchError(
-        "getSlice: slice name does not match with any slice in state"
-      );
-    }
-    return this.slices[name] as T;
+  getState<T extends ISlices>(callback: (stateSnapShot: ISlices) => T): T {
+    return callback(this.slices);
   }
 
   private dispatchError(message: string): never {
