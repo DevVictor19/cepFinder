@@ -1,3 +1,3 @@
 export interface IUpdatable {
-  update<T>(items: T[]): void;
+  update(items: any): void;
 }

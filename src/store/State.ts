@@ -1,10 +1,16 @@
+import { IUpdatable } from "../models/updatable";
+
 interface ISlices {
   [key: string]: any;
+}
+interface ISubscribers {
+  [key: string]: Partial<IUpdatable[]>;
 }
 
 export class State {
   private static instance: State;
-  slices: ISlices = {};
+  private slices: ISlices = {};
+  private subscribers: ISubscribers = {};
 
   private constructor() {}
 
@@ -16,13 +22,15 @@ export class State {
     return State.instance;
   }
 
-  createSlice(name: string, initialValue: any) {
+  createSlice<T>(name: string, initialValue: T) {
     if (this.slices[name]) {
       this.dispatchError(
         "createSlice: you are trying to create an existing slice in state"
       );
     }
+
     this.slices = { ...this.slices, [name]: initialValue };
+    this.subscribers[name] = [];
   }
 
   updateSlice<T>(name: string, callback: (stateSnapShot: T) => T) {
@@ -33,6 +41,17 @@ export class State {
     }
 
     this.slices[name] = callback(this.slices[name]);
+    this.dispatchUpdateFor(name);
+  }
+
+  subscribeFor(name: string, subscriberInstance: IUpdatable) {
+    if (!this.subscribers[name]) {
+      this.dispatchError(
+        "subscribe: the slice was not initialized for assing subscribers"
+      );
+    }
+
+    this.subscribers[name] = [...this.subscribers[name], subscriberInstance];
   }
 
   getState<T extends ISlices>(callback: (stateSnapShot: ISlices) => T): T {
@@ -41,5 +60,11 @@ export class State {
 
   private dispatchError(message: string): never {
     throw new Error(message);
+  }
+
+  private dispatchUpdateFor(name: string) {
+    this.subscribers[name].forEach((subscriberInstance) => {
+      subscriberInstance!.update(this.slices[name]);
+    });
   }
 }
