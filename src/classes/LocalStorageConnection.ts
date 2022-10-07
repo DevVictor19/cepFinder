@@ -7,11 +7,11 @@ export class LocalStorageConnection<T> implements IUpdatable {
     }
   }
 
-  get items(): T[] {
+  get items(): T {
     return JSON.parse(localStorage.getItem(this.localStorageName)!);
   }
 
-  update<T>(items: T[]) {
+  update(items: T) {
     localStorage.setItem(this.localStorageName, JSON.stringify(items));
   }
 
