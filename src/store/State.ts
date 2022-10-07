@@ -41,10 +41,13 @@ export class State {
     }
 
     this.slices[name] = callback(this.slices[name]);
-    this.dispatchUpdateFor(name);
+
+    if (this.subscribers[name].length > 0) {
+      this.dispatchUpdateFor(name);
+    }
   }
 
-  subscribeFor(name: string, subscriberInstance: IUpdatable) {
+  addSubscribe(name: string, subscriberInstance: IUpdatable) {
     if (!this.subscribers[name]) {
       this.dispatchError(
         "subscribe: the slice was not initialized for assing subscribers"
