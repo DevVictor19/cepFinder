@@ -48,10 +48,6 @@ export class CepTable implements IUpdatable {
   }
 
   update(items: ICep[]) {
-    if (this.tableMenuIsVisible && items.length === 0) {
-      this.toggleMenuTableElements();
-    }
-
     if (!this.tableMenuIsVisible && items.length > 0) {
       this.toggleMenuTableElements();
     }
@@ -80,6 +76,7 @@ export class CepTable implements IUpdatable {
 
   deleteAllCeps() {
     this.resetTableData();
+    this.toggleMenuTableElements();
     State.getInstace().updateSlice<ICep[]>("ceps", (_) => []);
   }
 

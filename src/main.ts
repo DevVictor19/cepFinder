@@ -96,8 +96,24 @@ const tableForm = new ControledForm(
   }
 );
 
-tableForm.addInputControlHandler("tableSearchInput", "input", controlInput);
+tableForm.addInputControlHandler(
+  "tableSearchInput",
+  "input",
+  tableFormInputHandler
+);
 tableForm.addSubmitHandler(tableFormSubmitHandler);
+
+function tableFormInputHandler(e: Event) {
+  controlInput(e);
+
+  const currentInputValue = (e.target as HTMLInputElement).value;
+  const currentCepsInList = state.getState<ICep[]>((s) => s.ceps);
+  const filteredCeps = currentCepsInList.filter(
+    (cepItem) => cepItem.cep.indexOf(currentInputValue) > -1
+  );
+
+  cepTable.update(filteredCeps);
+}
 
 function tableFormSubmitHandler(e: SubmitEvent) {
   e.preventDefault();
