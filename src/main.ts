@@ -81,6 +81,7 @@ async function headerSubmitHandler(e: SubmitEvent) {
     state.updateSlice<ICep[]>("ceps", (s) => [...s, newCep]);
     cepTable.goToCep(currentInputValue);
     cepTable.focusCep(currentInputValue);
+    headerForm.inputElements["cepInput"].value = "";
   } catch (e) {
     console.log(e);
   }
