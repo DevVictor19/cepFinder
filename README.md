@@ -1,7 +1,14 @@
-# cepFinder
+# cepFinder V2
 
-Aplicação de buscar CEP feita em js, html e css.
-Feita no programa Dev For Tech 2 - Gama Academy
+Aplicação de buscar CEP, utilizando conceitos de POO e
+SOLID. Feito com TypeScript, css e HTML, além do viacep Api.
+
+## Como iniciar a aplicação?
+
+1. Clonar Repositório na sua máquina
+2. execute no diretório do projeto: npm i
+3. execute no diretório do projeto: npm start
+4. http://localhost:8080
 
 ## Features
 
@@ -15,7 +22,7 @@ Feita no programa Dev For Tech 2 - Gama Academy
 
 ## Stacks
 
-- js, html, css
+- TS, html, css
 - localStorage
 
 ## Links importantes
