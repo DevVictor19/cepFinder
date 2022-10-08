@@ -37,9 +37,9 @@ const headerForm = new ControledForm(
 );
 
 headerForm.addInputControlHandler("cepInput", "input", controlInput);
-headerForm.addSubmitHandler(headerSubmitHandler);
+headerForm.addSubmitHandler(headerFormSubmitHandler);
 
-async function headerSubmitHandler(e: SubmitEvent) {
+async function headerFormSubmitHandler(e: SubmitEvent) {
   e.preventDefault();
 
   const currentInputValue = headerForm.inputElements["cepInput"].value;
@@ -85,4 +85,36 @@ async function headerSubmitHandler(e: SubmitEvent) {
   } catch (e) {
     console.log(e);
   }
+}
+
+const tableForm = new ControledForm(
+  document.querySelector(".main-content__actions-form") as HTMLFormElement,
+  {
+    tableSearchInput: document.getElementById(
+      "main-content__actions-input"
+    ) as HTMLInputElement,
+  }
+);
+
+tableForm.addInputControlHandler("tableSearchInput", "input", controlInput);
+tableForm.addSubmitHandler(tableFormSubmitHandler);
+
+function tableFormSubmitHandler(e: SubmitEvent) {
+  e.preventDefault();
+
+  const currentInputValue = tableForm.inputElements["tableSearchInput"].value;
+
+  if (currentInputValue.length !== 8) {
+    alert("Insira um cep válido! Deve ser composto apenas 8 números");
+    return;
+  }
+
+  if (!document.getElementById(currentInputValue)) {
+    alert("Cep não existe na lista");
+    return;
+  }
+
+  cepTable.goToCep(currentInputValue);
+  cepTable.focusCep(currentInputValue);
+  tableForm.inputElements["tableSearchInput"].value = "";
 }
