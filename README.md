@@ -7,9 +7,8 @@ SOLID. Feito com TypeScript, css e HTML, além do viacep Api.
 
 1. Clonar Repositório na sua máquina
 2. execute no diretório do projeto: npm i
-3. execute no diretório do projeto: npm run build
-4. execute no diretório do projeto: npm start
-5. http://localhost:8080
+3. execute no diretório do projeto: npm start
+4. http://localhost:8080
 
 ## Features
 
