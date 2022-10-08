@@ -5,6 +5,7 @@ import { State } from "../store/State";
 export class CepTable implements IUpdatable {
   private tableElement: HTMLTableElement;
   private tableMenuElement: HTMLDivElement;
+  private deleteAllButtonElement: HTMLButtonElement;
   private tbodyElement: HTMLTableElement;
   private emptyParagraphTextElement: HTMLParagraphElement;
   private tableMenuIsVisible: boolean = false;
@@ -12,12 +13,14 @@ export class CepTable implements IUpdatable {
   constructor(
     table: HTMLTableElement,
     tableMenu: HTMLDivElement,
+    deleteAllBtn: HTMLButtonElement,
     tableBody: HTMLTableElement,
     emptyText: HTMLParagraphElement,
     initialValues: ICep[]
   ) {
     this.tableElement = table;
     this.tableMenuElement = tableMenu;
+    this.deleteAllButtonElement = deleteAllBtn;
     this.tbodyElement = tableBody;
     this.emptyParagraphTextElement = emptyText;
 
@@ -27,6 +30,21 @@ export class CepTable implements IUpdatable {
       });
       this.toggleMenuTableElements();
     }
+
+    this.deleteAllButtonElement.addEventListener(
+      "click",
+      this.deleteAllCeps.bind(this)
+    );
+
+    this.tbodyElement.addEventListener("click", (e: MouseEvent) => {
+      const targetEl = e.target as HTMLElement;
+
+      if (targetEl.classList[1] !== "main-content__tbody-td--remove") return;
+
+      State.getInstace().updateSlice<ICep[]>("ceps", (state) => {
+        return state.filter((item) => item.cep !== targetEl.parentElement!.id);
+      });
+    });
   }
 
   update(items: ICep[]) {
@@ -44,22 +62,36 @@ export class CepTable implements IUpdatable {
     });
   }
 
+  goToCep(cep: string) {
+    (document.getElementById(cep) as HTMLTableCellElement).scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+
+  focusCep(cep: string) {
+    const cepEl = document.getElementById(cep) as HTMLTableCellElement;
+
+    cepEl.classList.add("focus");
+
+    setTimeout(() => {
+      cepEl.classList.remove("focus");
+    }, 3000);
+  }
+
+  deleteAllCeps() {
+    this.resetTableData();
+    State.getInstace().updateSlice<ICep[]>("ceps", (_) => []);
+  }
+
   private render(data: ICep) {
     this.tbodyElement.innerHTML += `<tr class="main-content__tbody-tr" id="${data.cep}">
       <td class="main-content__tbody-td">${data.cep}</td>
       <td class="main-content__tbody-td">${data.locality}</td>
       <td class="main-content__tbody-td">${data.district}</td>
       <td class="main-content__tbody-td">${data.state} (${data.stateTag})</td>
-      <td class="main-content__tbody-td main-content__tbody-td--remove" id="remove-${data.cep}" >X</td>
+      <td class="main-content__tbody-td main-content__tbody-td--remove">X</td>
     </tr>
     `;
-
-    const remove_td = document.getElementById(`remove-${data.cep}`)!;
-    remove_td.addEventListener("click", () => {
-      State.getInstace().updateSlice<ICep[]>("ceps", (s) => {
-        return s.filter((item) => item.cep !== data.cep);
-      });
-    });
   }
 
   private toggleMenuTableElements() {
