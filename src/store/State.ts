@@ -40,7 +40,7 @@ export class State {
       );
     }
 
-    this.slices[name] = callback(this.slices[name]);
+    this.slices[name] = callback({ ...this.slices }[name]);
 
     if (this.subscribers[name].length > 0) {
       this.dispatchUpdateFor(name);
