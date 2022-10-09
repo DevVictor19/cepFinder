@@ -58,7 +58,7 @@ export class State {
   }
 
   getState<T extends ISlices>(callback: (stateSnapShot: ISlices) => T): T {
-    return callback(this.slices);
+    return callback({ ...this.slices });
   }
 
   private dispatchError(message: string): never {
