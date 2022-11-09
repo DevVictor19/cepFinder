@@ -61,7 +61,7 @@ async function headerFormSubmitHandler(e: SubmitEvent) {
   try {
     const data = await cepApi.get<any>(`${currentInputValue}/json`);
 
-    if (data.erro === "true") {
+    if (data.erro === true) {
       alert("Cep não encontrado, tente outra vez");
       return;
     }
